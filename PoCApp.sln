@@ -5,7 +5,12 @@ VisualStudioVersion = 15.0.28010.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoCApp", "PoCApp\PoCApp.csproj", "{7E89A957-4E21-4C2E-B7F2-51FFE2658E53}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "FtApp", "FtApp\FtApp.shproj", "{88C31BBF-CB2D-4283-973F-6A2B3F8F55F5}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		FtApp\FtApp.projitems*{88c31bbf-cb2d-4283-973f-6a2b3f8f55f5}*SharedItemsImports = 13
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
