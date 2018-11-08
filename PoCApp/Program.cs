@@ -12,6 +12,8 @@ namespace PoCApp
     {
         private const string IP = TxtInterface.ControllerBluetoothIp;//ControllerBluetoothIp; //"192.168.8.2"; ControllerUsbIp
         static TxtInterface txtLink = null;
+        static int [] I = null;
+        
 
         static void Main(string[] args)
         {
@@ -53,6 +55,8 @@ namespace PoCApp
             txtLink.Connect(IP);
             txtLink.StartOnlineMode();
             ConfigureIOPorts();
+
+            I = new int[txtLink.GetInputCount()];
         }
 
         private static void ConfigureIOPorts()
@@ -84,8 +88,10 @@ namespace PoCApp
             txtLink.SetMotorValue(motor, 300, MotorDirection.Left);
             Thread.Sleep(3000);
             txtLink.SetMotorValue(0, 300, MotorDirection.Right);
-            Thread.Sleep(3000);
+            while(I[0] != 1)
+            {Thread.Sleep(1);}            
             txtLink.SetMotorValue(0, 0, MotorDirection.Right);
+
             Thread.Sleep(2000);
             motor = txtLink.GetMotorIndex(1);
             txtLink.SetMotorValue(1, 400, MotorDirection.Right);
@@ -120,6 +126,7 @@ namespace PoCApp
             for (int i = 0; i < txtLink.GetInputCount(); i++)
             {
                 Console.Write("I{0,1} {1, 5}  |", i + 1, txtLink.GetInputValue(i));
+                I[i] = txtLink.GetInputValue(i);
             }
             Console.WriteLine();
         }
