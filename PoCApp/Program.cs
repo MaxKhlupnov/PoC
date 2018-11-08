@@ -52,7 +52,8 @@ namespace PoCApp
             txtLink.ConnectionLost += TxtLink_ConnectionLost;
             txtLink.OnlineStarted += (sender, eventArgs) => Console.WriteLine("Online mode started");
             txtLink.OnlineStopped += (sender, eventArgs) => Console.WriteLine("Online mode stopped");
-           
+            txtLink.CounterChanged += TxtLink_CounterChanged;
+
             txtLink.Connect(IP);
             txtLink.StartOnlineMode();            
             ConfigureIOPorts();
@@ -246,6 +247,18 @@ namespace PoCApp
             Thread.Sleep(4000);
             txtLink.SetOutputValue(6, 0);
             txtLink.SetOutputValue(7, 0);
+        }
+
+        private static void TxtLink_CounterChanged(object sender, FtApp.Fischertechnik.Events.CounterChangedEventArgs e)
+        {
+
+
+            for (int i = 0; i < e.Counters.Length; i++)
+            {
+                Console.Write("C{0} {1}  |", i, e.Counters[i]);
+
+            }
+            Console.WriteLine();
         }
 
         private static void TxtLink_InputValueChanged(object sender, FtApp.Fischertechnik.Txt.Events.InputValueChangedEventArgs e)
