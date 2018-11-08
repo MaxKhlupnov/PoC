@@ -12,7 +12,7 @@ namespace PoCApp
     {
         private const string IP = TxtInterface.ControllerBluetoothIp;//ControllerBluetoothIp; //"192.168.8.2"; ControllerUsbIp
         static TxtInterface txtLink = null;
-        static int [] I = null;
+        static int [] I = new int[8];
         
 
         static void Main(string[] args)
@@ -53,8 +53,7 @@ namespace PoCApp
             txtLink.OnlineStopped += (sender, eventArgs) => Console.WriteLine("Online mode stopped");
            
             txtLink.Connect(IP);
-            txtLink.StartOnlineMode();
-            I = new int[txtLink.GetInputCount()];
+            txtLink.StartOnlineMode();            
             ConfigureIOPorts();
 
             
