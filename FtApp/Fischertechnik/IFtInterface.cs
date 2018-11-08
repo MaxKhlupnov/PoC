@@ -1,4 +1,5 @@
 ﻿using FtApp.Fischertechnik;
+using FtApp.Fischertechnik.Events;
 using FtApp.Fischertechnik.Txt.Events;
 using System;
 
@@ -237,4 +238,5 @@ namespace TXTCommunication.Fischertechnik
     public delegate void DisconnectedEventHandler(object sender, EventArgs e);
     public delegate void OnlineStartedEventHandler(object sender, EventArgs e);
     public delegate void OnlineStoppedEventHandler(object sender, EventArgs e);
+    public delegate void CounterChangedEventHandler(object sender, CounterChangedEventArgs e);
 }

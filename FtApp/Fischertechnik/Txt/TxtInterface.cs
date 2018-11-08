@@ -9,6 +9,7 @@ using TXTCommunication.Fischertechnik.Txt.Camera;
 using TXTCommunication.Fischertechnik.Txt.Command;
 using TXTCommunication.Fischertechnik.Txt.Response;
 using Timer = System.Timers.Timer;
+using FtApp.Fischertechnik.Events;
 // ReSharper disable InconsistentNaming
 
 namespace TXTCommunication.Fischertechnik.Txt
@@ -70,6 +71,8 @@ namespace TXTCommunication.Fischertechnik.Txt
         
         private readonly FtExtension _masterInterface;
 
+        private FtMotorExtension _motorInterface;
+
         private TxtCommunication TxtCommunication { get; set; }
         public TxtCameraCommunication TxtCamera { get; private set; }
         
@@ -90,6 +93,7 @@ namespace TXTCommunication.Fischertechnik.Txt
         {
             Connection = ConnectionStatus.NotConnected;
             _masterInterface = new FtExtension(0);
+            _motorInterface = new FtMotorExtension(0);
         }
 
         public ConnectionStatus Connection { get; set; }
@@ -122,6 +126,7 @@ namespace TXTCommunication.Fischertechnik.Txt
 
 
             _masterInterface.ResetValues();
+            _motorInterface.ResetValues();
 
             LogMessage("Connected");
             _connected?.Invoke(this, new EventArgs());
@@ -154,6 +159,7 @@ namespace TXTCommunication.Fischertechnik.Txt
 
             LogMessage("Disconnected");
             _masterInterface.ResetValues();
+            _motorInterface.ResetValues();
         }
 
         public void StartOnlineMode()
@@ -350,6 +356,23 @@ namespace TXTCommunication.Fischertechnik.Txt
             _masterInterface.SetMotorValue(motorIndex, value);
         }
 
+        public void SetMotorDistance(int motorIndex, short speed, short distance, MotorDirection direction, int extension = 0)
+        {
+            if (extension > 0)
+            {
+                throw new NotImplementedException("More than one extension is not implemented right now");
+            }
+            if (speed < 0 || speed > 512)
+            {
+                throw new ArgumentException(String.Format("Incorrect speed value {0}. PWM Value should be from 0 to 512 (= max speed)", speed));
+            }
+            ThrowWhenNotConnected();
+
+            _masterInterface.SetMotorDirection(motorIndex, direction);
+            _masterInterface.SetMotorValue(motorIndex, speed);
+            _motorInterface.SetMotorDistance(motorIndex, distance);
+        }
+
         public void ConfigureOutputMode(int outputIndex, bool isMotor, int extension = 0)
         {
             if (extension > 0)
@@ -424,7 +447,15 @@ namespace TXTCommunication.Fischertechnik.Txt
                 commandExchangeData.PwmOutputValues[i] = (short)_masterInterface.OutputValues[i];
             }
 
-            
+            for (int i = 0; i < _motorInterface.DistanceValues.Length; i++)
+            {
+                if (_motorInterface.DistanceValues[i] != 0)
+                {
+                    commandExchangeData.MotorDistanceValues[i] = (short)_motorInterface.DistanceValues[i];
+                    commandExchangeData.MotorCommandId[i]++; 
+                }
+            }
+
             commandExchangeData.SoundCommandId = (ushort)_soundPlayIndex;
             
 
@@ -463,7 +494,17 @@ namespace TXTCommunication.Fischertechnik.Txt
                 }
             }
 
-            if (valueChanged.Count > 0)
+            //Read motor counters
+            if(responseExchangeData.CounterValue != null && (_motorInterface.CounterValue == null ||
+                        !responseExchangeData.CounterValue.SequenceEqual<short>(_motorInterface.CounterValue)))
+            {
+                
+                _motorInterface.CounterValue = responseExchangeData.CounterValue;
+                CounterChangedEventArgs changedEvent = new CounterChangedEventArgs(_motorInterface.CounterValue);
+                _counuterChanged?.Invoke(this, changedEvent);
+            }
+
+                if (valueChanged.Count > 0)
             {
                 // Fire an event when an input value has changed
                 InputValueChangedEventArgs eventArgs = new InputValueChangedEventArgs(valueChanged);
@@ -693,6 +734,21 @@ namespace TXTCommunication.Fischertechnik.Txt
             }
         }
 
+        private event CounterChangedEventHandler _counuterChanged;
+        public event CounterChangedEventHandler CounterChanged
+        {
+            add
+            {
+                if (_counuterChanged == null || !_counuterChanged.GetInvocationList().Contains(value))
+                {
+                    _counuterChanged += value;
+                }
+            }
+            remove
+            {
+                _counuterChanged -= value;
+            }
+        }
 
         public void Dispose()
         {

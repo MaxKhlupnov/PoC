@@ -10,7 +10,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Fischertechnik\ControllerType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Fischertechnik\Events\CounterChangedEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Fischertechnik\Events\InputValueChangedEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Fischertechnik\FtMotorExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Fischertechnik\IFtInterface.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Fischertechnik\FtExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Fischertechnik\Simulation\SimulatedFtInterface.cs" />
