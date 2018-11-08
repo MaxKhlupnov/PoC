@@ -54,9 +54,10 @@ namespace PoCApp
            
             txtLink.Connect(IP);
             txtLink.StartOnlineMode();
+            I = new int[txtLink.GetInputCount()];
             ConfigureIOPorts();
 
-            I = new int[txtLink.GetInputCount()];
+            
         }
 
         private static void ConfigureIOPorts()
