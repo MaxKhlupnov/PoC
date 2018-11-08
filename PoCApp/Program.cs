@@ -10,7 +10,7 @@ namespace PoCApp
 {
     class Program
     {
-        private const string IP = TxtInterface.ControllerUsbIp;//ControllerBluetoothIp; //"192.168.8.2";
+        private const string IP = TxtInterface.ControllerBluetoothIp;//ControllerBluetoothIp; //"192.168.8.2"; ControllerUsbIp
         static TxtInterface txtLink = null;
 
         static void Main(string[] args)
@@ -19,6 +19,9 @@ namespace PoCApp
             Console.WriteLine("Start motor test...");
             TestMotor();
             Console.WriteLine("Motor test done...");
+            Console.WriteLine("Start compressor test");
+            TestCompressor();
+            Console.WriteLine("Compressor test is done");
             Console.ReadLine();
             Console.WriteLine("Disconnecting...");
 
@@ -67,6 +70,9 @@ namespace PoCApp
 
             int outputIndex = 0;
             txtLink.ConfigureOutputMode(outputIndex++, true);
+            txtLink.ConfigureOutputMode(outputIndex++, true);
+            txtLink.ConfigureOutputMode(outputIndex++, true);
+            txtLink.ConfigureOutputMode(outputIndex++, false);
            // txtLink.ConfigureOutputMode(outputIndex++, true);
          //   txtLink.ConfigureOutputMode(outputIndex++, true);
         }
@@ -75,12 +81,36 @@ namespace PoCApp
         {
             // txtLink.SetOutputValue(0, 512);
             int motor = txtLink.GetMotorIndex(0);
-             txtLink.SetMotorValue(motor, 300, MotorDirection.Left);
-            Thread.Sleep(4000);
+            txtLink.SetMotorValue(motor, 300, MotorDirection.Left);
+            Thread.Sleep(3000);
             txtLink.SetMotorValue(0, 300, MotorDirection.Right);
             Thread.Sleep(3000);
             txtLink.SetMotorValue(0, 0, MotorDirection.Right);
+            Thread.Sleep(2000);
+            motor = txtLink.GetMotorIndex(1);
+            txtLink.SetMotorValue(1, 400, MotorDirection.Right);
+            Thread.Sleep(2000);
+            txtLink.SetMotorValue(1, 200, MotorDirection.Left);
+            Thread.Sleep(2000);
+            txtLink.SetMotorValue(1, 0, MotorDirection.Left);
+            Thread.Sleep(2000);
+            motor = txtLink.GetMotorIndex(2);
+            txtLink.SetMotorValue(2, 400, MotorDirection.Right);
+            Thread.Sleep(2000);
+            txtLink.SetMotorValue(2, 300, MotorDirection.Left);
+            Thread.Sleep(2000);
+            txtLink.SetMotorValue(2, 0, MotorDirection.Left);
             // 
+        }
+
+        private static void TestCompressor()
+        {
+            txtLink.SetOutputValue(6, 512);
+            Thread.Sleep(2000);
+            txtLink.SetOutputValue(7, 512);
+            Thread.Sleep(4000);
+            txtLink.SetOutputValue(6, 0);
+            txtLink.SetOutputValue(7, 0);
         }
 
         private static void TxtLink_InputValueChanged(object sender, FtApp.Fischertechnik.Txt.Events.InputValueChangedEventArgs e)
