@@ -114,28 +114,49 @@ namespace PoCApp
 
         private static void SetMotorToNull()
         {
-
-
-            txtLink.SetMotorValue(0, 100, MotorDirection.Right);
-            while (I[0] != 1)
+            int motor = 0;
+            int sensor = 0;
+            if (I[sensor] != 1)
             {
-                Thread.Sleep(1);
+                do
+                {
+                    txtLink.SetMotorValue(motor, 200, MotorDirection.Right);
+                } while (I[0] != 1);
+                txtLink.SetMotorValue(motor, 0, MotorDirection.Right);
             }
-            txtLink.SetMotorValue(0, 0, MotorDirection.Right);
 
-            txtLink.SetMotorValue(1, 500, MotorDirection.Right);
-            while (I[1] != 1)
+            motor = 1;
+            sensor = 1;
+            if (I[sensor] != 1)
             {
-                Thread.Sleep(1);
+                do
+                {
+                    txtLink.SetMotorValue(motor, 200, MotorDirection.Right);
+                } while (I[0] != 1);
+                txtLink.SetMotorValue(motor, 0, MotorDirection.Right);
             }
-            txtLink.SetMotorValue(1, 0, MotorDirection.Right);
 
-            txtLink.SetMotorValue(2, 300, MotorDirection.Right);
-            while (I[2] != 1)
+            motor = 2;
+            sensor = 2;
+            if (I[sensor] != 1)
             {
-                Thread.Sleep(1);
+                do
+                {
+                    txtLink.SetMotorValue(motor, 200, MotorDirection.Right);
+                } while (I[0] != 1);
+                txtLink.SetMotorValue(motor, 0, MotorDirection.Right);
             }
-            txtLink.SetMotorValue(2, 0, MotorDirection.Right);
+
+            //motor = 3;
+            //sensor = 3;
+            //if (I[sensor] != 1)
+            //{
+            //    do
+            //    {
+            //        txtLink.SetMotorValue(motor, 200, MotorDirection.Right);
+            //    } while (I[0] != 1);
+            //    txtLink.SetMotorValue(motor, 0, MotorDirection.Right);
+            //}
 
 
             //for (int i = 0; i < 4; i++)
