@@ -532,7 +532,7 @@ namespace TXTCommunication.Fischertechnik.Txt
             }
             for (int i = 0; i < MotorOutputs; i++)
             {
-                if (_masterInterface.OutputModes[i/2])
+                if (_masterInterface.OutputModes[i])
                 {
                     _masterInterface.SetMotorValue(i, 0);
                 }
