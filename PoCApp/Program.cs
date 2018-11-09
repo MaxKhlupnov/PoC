@@ -12,41 +12,68 @@ namespace PoCApp
     {
         private const string IP = TxtInterface.ControllerBluetoothIp;//ControllerBluetoothIp; //"192.168.8.2"; ControllerUsbIp
         static TxtInterface txtLink = null;
-        static int [] I = new int[8];
-        
+        static int[] I = new int[8];
+        static int[] C = new int[4];
+
 
         static void Main(string[] args)
         {
             InitConnection();
-            SetMotorToNull();
-            Console.WriteLine("Start motor test...");
-            //TestMotor();
-            Console.WriteLine("Motor test done...");
-            Console.WriteLine("Start compressor test");
-            TestCompressor();
-            Console.WriteLine("Compressor test is done");
-            Console.ReadLine();
-            Console.WriteLine("Disconnecting...");
+            Thread.Sleep(500);
+            int position = 1;
+            while (true)
+            {
+                Console.WriteLine("Input position 1 or 2 or 3");
+                int.TryParse(Console.ReadLine(), out position);
 
-            // Stop the inline mode
-            txtLink.StopOnlineMode();
+                switch (position)
+                {
+                    case 1:
+                        MouveToOnePosition();
+                        break;
+                    case 2:
+                        MouveToTwoPosition();
+                        break;
+                    case 3:
+                        MouveToThreePosition();
+                        break;
+                    default:
+                        //Console.WriteLine("Input number from 1 to 3");
 
-            // Disconnect from the interface
-            if (txtLink.Connection == ConnectionStatus.Connected)
-                txtLink.Disconnect();
-            
+                        // Stop the inline mode
+                        txtLink.StopOnlineMode();
 
-            // Don't forget to dispose
-            txtLink.Dispose();
+                        // Disconnect from the interface
+                        if (txtLink.Connection == ConnectionStatus.Connected)
+                            txtLink.Disconnect();
 
-            
+
+                        // Don't forget to dispose
+                        txtLink.Dispose();
+
+                        break;
+                }
+            }
+
+            //// Stop the inline mode
+            //txtLink.StopOnlineMode();
+
+            //// Disconnect from the interface
+            //if (txtLink.Connection == ConnectionStatus.Connected)
+            //    txtLink.Disconnect();
+
+
+            //// Don't forget to dispose
+            //txtLink.Dispose();
+
+
         }
 
         static void InitConnection()
         {
-            txtLink = new TxtInterface();            
+            txtLink = new TxtInterface();
             txtLink.IsDebugEnabled = true;
-            txtLink.InputValueChanged += TxtLink_InputValueChanged;            
+            txtLink.InputValueChanged += TxtLink_InputValueChanged;
             txtLink.Connected += TxtLink_Connected;
             txtLink.Disconnected += TxtLink_Disconnected;
             txtLink.ConnectionLost += TxtLink_ConnectionLost;
@@ -55,10 +82,10 @@ namespace PoCApp
             txtLink.CounterChanged += TxtLink_CounterChanged;
 
             txtLink.Connect(IP);
-            txtLink.StartOnlineMode();            
+            txtLink.StartOnlineMode();
             ConfigureIOPorts();
 
-            
+
         }
 
         private static void ConfigureIOPorts()
@@ -79,163 +106,379 @@ namespace PoCApp
             txtLink.ConfigureOutputMode(outputIndex++, true);
             txtLink.ConfigureOutputMode(outputIndex++, true);
             txtLink.ConfigureOutputMode(outputIndex++, false);
-           // txtLink.ConfigureOutputMode(outputIndex++, true);
-         //   txtLink.ConfigureOutputMode(outputIndex++, true);
+            // txtLink.ConfigureOutputMode(outputIndex++, true);
+            //   txtLink.ConfigureOutputMode(outputIndex++, true);
         }
 
         private static void TestMotor()
         {
+            int currentCountMotor0 = C[0];
+            Console.WriteLine("Start Count motor {0}", currentCountMotor0);
+            do
+            {
+                txtLink.SetMotorValue(0, 512, MotorDirection.Left);
+
+            } while (C[0] < currentCountMotor0 + 450);
+            txtLink.SetMotorValue(0, 0, MotorDirection.Left);
+
+            Thread.Sleep(500);
+
+            int currentCountMotor2 = C[2];
+
+            Console.WriteLine("Start Count motor {0}", currentCountMotor2);
+            do
+            {
+                txtLink.SetMotorValue(2, 512, MotorDirection.Left);
+
+            } while (C[2] < currentCountMotor2 + 350);
+            txtLink.SetMotorValue(2, 0, MotorDirection.Left);
+
+            Thread.Sleep(500);
+
+            int currentCountMotor1 = C[1];
+
+            Console.WriteLine("Start Count motor {0}", currentCountMotor1);
+            do
+            {
+                txtLink.SetMotorValue(1, 512, MotorDirection.Left);
+
+            } while (C[1] < currentCountMotor1 + 700);
+            txtLink.SetMotorValue(1, 0, MotorDirection.Left);
+
             // txtLink.SetOutputValue(0, 512);
-            int motor = txtLink.GetMotorIndex(0);
-            txtLink.SetMotorValue(motor, 300, MotorDirection.Left);
-            Thread.Sleep(3000);
+            //int motor = txtLink.GetMotorIndex(0);
+            //txtLink.SetMotorValue(motor, 300, MotorDirection.Left);
+            //Thread.Sleep(3000);
             //txtLink.SetMotorValue(0, 300, MotorDirection.Right);
             //while(I[0] != 1)
             //{
             //    Thread.Sleep(1);
             //}            
-            txtLink.SetMotorValue(0, 0, MotorDirection.Right);
+            //txtLink.SetMotorValue(0, 0, MotorDirection.Right);
 
-            Thread.Sleep(2000);
-            motor = txtLink.GetMotorIndex(1);
-            txtLink.SetMotorValue(1, 400, MotorDirection.Left);
+            //Thread.Sleep(2000);
+            //motor = txtLink.GetMotorIndex(1);
+            //txtLink.SetMotorValue(1, 400, MotorDirection.Left);
             //Thread.Sleep(2000);
             //txtLink.SetMotorValue(1, 200, MotorDirection.Left);
-            Thread.Sleep(2000);
-            txtLink.SetMotorValue(1, 0, MotorDirection.Left);
-            Thread.Sleep(2000);
+            //Thread.Sleep(2000);
+            //txtLink.SetMotorValue(1, 0, MotorDirection.Left);
+            //Thread.Sleep(2000);
             //motor = txtLink.GetMotorIndex(2);
-            txtLink.SetMotorValue(2, 400, MotorDirection.Left);
+            //txtLink.SetMotorValue(2, 400, MotorDirection.Left);
             //Thread.Sleep(2000);
             //txtLink.SetMotorValue(2, 300, MotorDirection.Left);
-            Thread.Sleep(2000);
-            txtLink.SetMotorValue(2, 0, MotorDirection.Left);
+            //Thread.Sleep(2000);
+            //txtLink.SetMotorValue(2, 0, MotorDirection.Left);
             // 
         }
 
+        private static void MouveToOnePosition()
+        {
+            //-- Move motor 2 (Вылет)
+            int motor = 2;
+
+            SetMotorToNull();
+
+            Thread.Sleep(500);
+
+            int currentCountMotor = C[motor];
+
+            Console.WriteLine("Start Count motor {0}", currentCountMotor);
+
+            while (C[motor] < currentCountMotor + 300)
+            {
+                txtLink.SetMotorValue(motor, 512, MotorDirection.Left);
+            }
+            txtLink.SetMotorValue(motor, 0, MotorDirection.Left);
+
+            Thread.Sleep(500);
+
+            //-- Move motor 1 (Lift down)
+            motor = 1;
+
+            currentCountMotor = C[motor];
+
+            while (C[motor] < currentCountMotor + 850)
+            {
+                txtLink.SetMotorValue(motor, 450, MotorDirection.Left);
+            }
+            txtLink.SetMotorValue(motor, 0, MotorDirection.Left);
+
+            Thread.Sleep(1000);
+
+            //-- Start vacuum capture
+            VacuumCaptureOn();
+
+            Thread.Sleep(1000);
+
+            //-- Move motor 1 (Lift Up)
+            motor = 1;
+            while (I[motor] != 1)
+            {
+                txtLink.SetMotorValue(1, 512, MotorDirection.Right);
+            }
+            txtLink.SetMotorValue(1, 0, MotorDirection.Right);
+
+            Thread.Sleep(500);
+
+            //move motor 0 (Rotation left)
+            motor = 0;
+
+            currentCountMotor = C[motor];
+
+            while (C[motor] < currentCountMotor + 450)
+            {
+                txtLink.SetMotorValue(motor, 512, MotorDirection.Left);
+            }
+            txtLink.SetMotorValue(motor, 0, MotorDirection.Left);
+
+            //-- Move motor 1 (Lift down)
+            motor = 1;
+
+            currentCountMotor = C[motor];
+
+            while (C[motor] < currentCountMotor + 850)
+            {
+                txtLink.SetMotorValue(motor, 450, MotorDirection.Left);
+            }
+            txtLink.SetMotorValue(motor, 0, MotorDirection.Left);
+
+            Thread.Sleep(500);
+
+            //-- Stop vaacuum capture
+            VacuumCaptureOff();
+        }
+
+        private static void MouveToTwoPosition()
+        {
+            //-- Move motor 2 (Вылет)
+            int motor = 2;
+
+            SetMotorToNull();
+
+            Thread.Sleep(500);
+
+            int currentCountMotor = C[motor];
+
+            Console.WriteLine("Start Count motor {0}", currentCountMotor);
+
+            while (C[motor] < currentCountMotor + 300)
+            {
+                txtLink.SetMotorValue(motor, 512, MotorDirection.Left);
+            }
+            txtLink.SetMotorValue(motor, 0, MotorDirection.Left);
+
+            Thread.Sleep(500);
+
+            //-- Move motor 1 (Lift down)
+            motor = 1;
+
+            currentCountMotor = C[motor];
+
+            while (C[motor] < currentCountMotor + 850)
+            {
+                txtLink.SetMotorValue(motor, 450, MotorDirection.Left);
+            }
+            txtLink.SetMotorValue(motor, 0, MotorDirection.Left);
+
+            Thread.Sleep(1000);
+
+            //-- Start vacuum capture
+            VacuumCaptureOn();
+
+            Thread.Sleep(1000);
+
+            //-- Move motor 1 (Lift Up)
+            motor = 1;
+            while (I[motor] != 1)
+            {
+                txtLink.SetMotorValue(1, 512, MotorDirection.Right);
+            }
+            txtLink.SetMotorValue(1, 0, MotorDirection.Right);
+
+            Thread.Sleep(500);
+
+            //move motor 0 (Rotation left)
+            motor = 0;
+
+            currentCountMotor = C[motor];
+
+            while (C[motor] < currentCountMotor + 900)
+            {
+                txtLink.SetMotorValue(motor, 512, MotorDirection.Left);
+            }
+            txtLink.SetMotorValue(motor, 0, MotorDirection.Left);
+
+            //-- Move motor 2 (Вылет)
+            motor = 2;
+
+            Thread.Sleep(500);
+
+            currentCountMotor = C[motor];
+
+            Console.WriteLine("Start Count motor {0}", currentCountMotor);
+
+            while (C[motor] < currentCountMotor + 600)
+            {
+                txtLink.SetMotorValue(motor, 512, MotorDirection.Left);
+            }
+            txtLink.SetMotorValue(motor, 0, MotorDirection.Left);
+
+            Thread.Sleep(500);
+
+            //-- Move motor 1 (Lift down)
+            motor = 1;
+
+            currentCountMotor = C[motor];
+
+            while (C[motor] < currentCountMotor + 850)
+            {
+                txtLink.SetMotorValue(motor, 450, MotorDirection.Left);
+            }
+            txtLink.SetMotorValue(motor, 0, MotorDirection.Left);
+
+            Thread.Sleep(500);
+
+            //-- Stop vaacuum capture
+            VacuumCaptureOff();
+        }
+
+        private static void MouveToThreePosition()
+        {
+            //-- Move motor 2 (Вылет)
+            int motor = 2;
+
+            SetMotorToNull();
+
+            Thread.Sleep(500);
+
+            int currentCountMotor = C[motor];
+
+            Console.WriteLine("Start Count motor {0}", currentCountMotor);
+
+            while (C[motor] < currentCountMotor + 300)
+            {
+                txtLink.SetMotorValue(motor, 512, MotorDirection.Left);
+            }
+            txtLink.SetMotorValue(motor, 0, MotorDirection.Left);
+
+            Thread.Sleep(500);
+
+            //-- Move motor 1 (Lift down)
+            motor = 1;
+
+            currentCountMotor = C[motor];
+
+            while (C[motor] < currentCountMotor + 850)
+            {
+                txtLink.SetMotorValue(motor, 450, MotorDirection.Left);
+            }
+            txtLink.SetMotorValue(motor, 0, MotorDirection.Left);
+
+            Thread.Sleep(1000);
+
+            //-- Start vacuum capture
+            VacuumCaptureOn();
+
+            Thread.Sleep(1000);
+
+            //-- Move motor 1 (Lift Up)
+            motor = 1;
+            while (I[motor] != 1)
+            {
+                txtLink.SetMotorValue(1, 512, MotorDirection.Right);
+            }
+            txtLink.SetMotorValue(1, 0, MotorDirection.Right);
+
+            Thread.Sleep(500);
+
+            //move motor 0 (Rotation left)
+            motor = 0;
+
+            currentCountMotor = C[motor];
+
+            while (C[motor] < currentCountMotor + 1370)
+            {
+                txtLink.SetMotorValue(motor, 512, MotorDirection.Left);
+            }
+            txtLink.SetMotorValue(motor, 0, MotorDirection.Left);
+
+            //-- Move motor 1 (Lift down)
+            motor = 1;
+
+            currentCountMotor = C[motor];
+
+            while (C[motor] < currentCountMotor + 850)
+            {
+                txtLink.SetMotorValue(motor, 450, MotorDirection.Left);
+            }
+            txtLink.SetMotorValue(motor, 0, MotorDirection.Left);
+
+            Thread.Sleep(500);
+
+            //-- Stop vaacuum capture
+            VacuumCaptureOff();
+        }
+
+        private static void VacuumCaptureOn()
+        {
+            txtLink.SetOutputValue(6, 512);
+            Thread.Sleep(1000);
+            txtLink.SetOutputValue(7, 512);
+        }
+
+        private static void VacuumCaptureOff()
+        {
+            txtLink.SetOutputValue(7, 0);
+            Thread.Sleep(500);
+            txtLink.SetOutputValue(6, 0);
+        }
+
+
+
         private static void SetMotorToNull()
         {
-            //int motor = 0;
-            //int sensor = 0;
-            //if (I[sensor] != 1)
-            //{
-            //    do
-            //    {
-            //        txtLink.SetMotorValue(motor, 200, MotorDirection.Right);
-            //    } while (I[sensor] != 1);
-            //    txtLink.SetMotorValue(motor, 0, MotorDirection.Right);
-            //} else
-            //{
-            //    Console.Write("Sensor is ");
-            //    Console.WriteLine(I[sensor]);
-            //}
+            int motor = 1;
+            int sensor = 1;
 
-            //motor = 1;
-            //sensor = 1;
-            //if (I[sensor] != 1)
-            //{
-            //    do
-            //    {
-            //        txtLink.SetMotorValue(motor, 200, MotorDirection.Right);
-            //    } while (I[sensor] != 1);
-            //    txtLink.SetMotorValue(motor, 0, MotorDirection.Right);
-            //} else
-            //{
-            //    Console.Write("Sensor is ");
-            //    Console.WriteLine(I[sensor]);
-            //}
-
-            //motor = 2;
-            //sensor = 2;
-            //if (I[sensor] != 1)
-            //{
-            //    do
-            //    {
-            //        txtLink.SetMotorValue(motor, 200, MotorDirection.Right);
-            //    } while (I[sensor] != 1);
-            //    txtLink.SetMotorValue(motor, 0, MotorDirection.Right);
-            //} else
-            //{
-            //    Console.Write("Sensor is ");
-            //    Console.WriteLine(I[sensor]);
-            //}
-
-            int motor = 0;
-            int sensor = 0;
-            if (I[sensor] != 1)
+            while (I[sensor] != 1)
             {
-                Console.WriteLine("Turn to swich motor 0");
-                txtLink.SetMotorValue(motor, 200, MotorDirection.Right);
-                while (I[sensor] != 1)
-                {
-                    Thread.Sleep(1);
-                }
-                txtLink.SetMotorValue(motor, 0, MotorDirection.Right);
-            } else
-            {
-                Console.Write("Sensor is ");
-                Console.WriteLine(I[sensor]);
+                Thread.Sleep(200);
+                Console.WriteLine("Start motor");
+                txtLink.SetMotorValue(motor, 512, MotorDirection.Right);
+
             }
+            Console.WriteLine("Stop motor");
+            txtLink.SetMotorValue(motor, 0, MotorDirection.Right);
 
-            motor = 1;
-            sensor = 1;
-            if (I[sensor] != 1)
+            Thread.Sleep(200);
+
+            motor = 0;
+            sensor = 0;
+            while (I[sensor] != 1)
             {
-                 Console.WriteLine("Turn to swich motor 1");
-                txtLink.SetMotorValue(motor, 400, MotorDirection.Right);
-                while (I[sensor] != 1)
-                {
-                    Thread.Sleep(1);
-                }
-                txtLink.SetMotorValue(motor, 0, MotorDirection.Right);
-            } else
-            {
-                Console.Write("Sensor is ");
-                Console.WriteLine(I[sensor]);
+                Thread.Sleep(200);
+                Console.WriteLine("Start motor");
+                txtLink.SetMotorValue(motor, 512, MotorDirection.Right);
+
             }
+            Console.WriteLine("Stop motor");
+            txtLink.SetMotorValue(motor, 0, MotorDirection.Right);
+
+            Thread.Sleep(200);
 
             motor = 2;
             sensor = 2;
-            if (I[sensor] != 1)
+            while (I[sensor] != 1)
             {
-                Console.WriteLine("Turn to swich motor 2");
-                txtLink.SetMotorValue(motor, 400, MotorDirection.Right);
-                while (I[sensor] != 1)
-                {
-                    Thread.Sleep(1);
-                }
-                txtLink.SetMotorValue(motor, 0, MotorDirection.Right);
-            } else
-            {
-                Console.Write("Sensor is ");
-                Console.WriteLine(I[sensor]);
+                Thread.Sleep(200);
+                Console.WriteLine("Start motor");
+                txtLink.SetMotorValue(motor, 512, MotorDirection.Right);
+
             }
-
-
-            //Console.WriteLine("Turn to swich");
-            //txtLink.SetMotorValue(0, 700, MotorDirection.Right);
-            //while (I[0] != 1)
-            //{
-            //    Thread.Sleep(1);
-            //}
-            //txtLink.SetMotorValue(0, 0, MotorDirection.Right);
-
-            //Console.WriteLine("Turn to swich");
-            //txtLink.SetMotorValue(1, 700, MotorDirection.Right);
-            //while (I[0] != 1)
-            //{
-            //    Thread.Sleep(1);
-            //}
-            //txtLink.SetMotorValue(1, 0, MotorDirection.Right);
-
-            //Console.WriteLine("Turn to swich");
-            //txtLink.SetMotorValue(2, 700, MotorDirection.Right);
-            //while (I[0] != 1)
-            //{
-            //    Thread.Sleep(1);
-            //}
-            //txtLink.SetMotorValue(2, 0, MotorDirection.Right);
-
+            Console.WriteLine("Stop motor");
+            txtLink.SetMotorValue(motor, 0, MotorDirection.Right);
         }
 
 
@@ -245,17 +488,23 @@ namespace PoCApp
             Thread.Sleep(2000);
             txtLink.SetOutputValue(7, 512);
             Thread.Sleep(4000);
-            txtLink.SetOutputValue(6, 0);
             txtLink.SetOutputValue(7, 0);
+            Thread.Sleep(500);
+            txtLink.SetOutputValue(7, 512);
+            Thread.Sleep(5000);
+            txtLink.SetOutputValue(7, 0);
+            Thread.Sleep(2000);
+            txtLink.SetOutputValue(6, 0);
         }
 
         private static void TxtLink_CounterChanged(object sender, FtApp.Fischertechnik.Events.CounterChangedEventArgs e)
         {
-
+            //Console.SetCursorPosition(0, Console.CursorTop - 1);
 
             for (int i = 0; i < e.Counters.Length; i++)
             {
                 Console.Write("C{0} {1}  |", i, e.Counters[i]);
+                C[i] = e.Counters[i];
 
             }
             Console.WriteLine();
