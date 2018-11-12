@@ -259,3 +259,9 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/FtAiMsDemo/FtAiMsDemo.Android/Assets
+/FtAiMsDemo/FtAiMsDemo.UWP/Assets
+/FtAiMsDemo/FtAiMsDemo.UWP/Properties
+/FtAiMsDemo/FtAiMsDemo.UWP/Package.appxmanifest
+/FtAiMsDemo/FtAiMsDemo.Android/Properties
+/FtAiMsDemo/FtAiMsDemo.Android/Resources

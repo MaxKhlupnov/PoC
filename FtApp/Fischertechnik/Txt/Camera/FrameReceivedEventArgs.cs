@@ -2,7 +2,7 @@
 
 namespace TXTCommunication.Fischertechnik.Txt.Camera
 {
-    class FrameReceivedEventArgs : EventArgs
+    public class FrameReceivedEventArgs : EventArgs
     {
         public readonly byte[] FrameData;
         public readonly int DataLength;

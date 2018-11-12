@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+              xmlns:hlp="clr-namespace:FtAiMsDemo.Helpers"
+             x:Class="FtAiMsDemo.Views.CameraView">
+  <ContentView.Content>
+        <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+            <!-- use a custom Markup Extension Source="{hlp:ImageResource FtAiMsDemo.Resources.RoboProImage_0.jpg}" -->
+            <Image x:Name="capturedImage" Source="{hlp:FtCamera}" MinimumWidthRequest="640"  MinimumHeightRequest="480"/>
+        </StackLayout>
+    </ContentView.Content>
+</ContentView>

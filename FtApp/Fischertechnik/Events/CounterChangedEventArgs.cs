@@ -11,5 +11,24 @@ namespace FtApp.Fischertechnik.Events
         {
             this.Counters = Counters;
         }
-}
+
+
+        public override string ToString()
+        {
+            if (Counters != null)
+            {
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < Counters.Length; i++)
+                {
+                    sb.AppendFormat("C{0} {1}  |", i, Counters[i]);
+                }
+                return sb.ToString();
+            }
+            else
+            {
+                return base.ToString();
+            }
+
+        }
+    }
 }

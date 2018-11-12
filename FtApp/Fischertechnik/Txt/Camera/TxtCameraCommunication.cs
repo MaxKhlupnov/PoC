@@ -11,8 +11,13 @@ using TXTCommunication.Utils;
 
 namespace TXTCommunication.Fischertechnik.Txt.Camera
 {
-    class TxtCameraCommunication : IDisposable
+    public class TxtCameraCommunication : IDisposable
     {
+
+        public int Width { get; set; } = 640;//1280;
+        public int Height { get; set; } = 480;//960;
+        public int Framerate { get; set; } = 15;
+
         private bool Connected { get; set; }
         private string Ipaddress { get; set; }
 
@@ -55,7 +60,12 @@ namespace TXTCommunication.Fischertechnik.Txt.Camera
 
             RequestedStop = false;
 
-            TxtCommunication.SendCommand(new CommandStartCamera(), new ResponseStartCamera());
+            CommandStartCamera cameraComm = new CommandStartCamera();
+            cameraComm.Width = this.Width;
+            cameraComm.Height = this.Height;
+            cameraComm.Framerate = this.Framerate;
+
+            TxtCommunication.SendCommand(cameraComm, new ResponseStartCamera());
 
             _networkingTaskQueue.DoWorkInQueue(ConnectToCameraServerMethod, true);
             _networkingTaskQueue.DoWorkInQueue(CameraReceiverMethod, false);

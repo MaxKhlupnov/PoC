@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:FtAiMsDemo"
+             xmlns:ftView="clr-namespace:FtAiMsDemo.Views"
+             x:Class="FtAiMsDemo.MainPage">
+
+    <StackLayout>
+        <!-- Place new controls here -->
+        <Label Text="Welcome to Xamarin.Forms!" 
+           HorizontalOptions="Center"
+           VerticalOptions="CenterAndExpand" />
+
+        <StackLayout Orientation="Horizontal" MinimumHeightRequest="750">
+            <ftView:RobotControl />
+            <ftView:CameraView HorizontalOptions="EndAndExpand" />
+        </StackLayout>
+        <ScrollView Orientation="Vertical" VerticalOptions="FillAndExpand">
+            <ListView x:Name="LogView">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout  Orientation="Vertical" Margin="1">
+                                <StackLayout Orientation="Horizontal">
+                                    <Label MinimumWidthRequest="80" Text="{Binding RecordType}" TextColor="Black" />
+                                    <Label Text="{Binding Message}" TextColor="Black" />
+                                </StackLayout>
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </ScrollView>
+
+    </StackLayout>
+
+</ContentPage>

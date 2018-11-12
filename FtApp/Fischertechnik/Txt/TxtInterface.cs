@@ -14,7 +14,7 @@ using FtApp.Fischertechnik.Events;
 
 namespace TXTCommunication.Fischertechnik.Txt
 {
-    class TxtInterface : IFtInterface
+    public class TxtInterface : IFtInterface
     {
 #if DEBUG
         public bool IsDebugEnabled { get; set; } = true;

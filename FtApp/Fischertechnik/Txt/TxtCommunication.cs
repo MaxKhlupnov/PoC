@@ -13,7 +13,7 @@ namespace TXTCommunication.Fischertechnik.Txt
     /// <summary>
     /// This class manages the TCP/IP communication between the TXT and us.
     /// </summary>
-    class TxtCommunication : IDisposable
+   public class TxtCommunication : IDisposable
     {
         public bool Connected { get; private set; }
 
