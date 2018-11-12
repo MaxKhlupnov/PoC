@@ -12,7 +12,7 @@ namespace FtAiMsDemo
 {
     public partial class App : Application
     {
-        private const string IP = TxtInterface.ControllerBluetoothIp;
+        private const string IP = TxtInterface.ControllerUsbIp;//.ControllerBluetoothIp;
 
         public static LogProvider Log = new LogProvider();
 
@@ -29,6 +29,7 @@ namespace FtAiMsDemo
                 TxtLink = new TxtInterface();
             }
             MainPage = new MainPage();
+            
         }
 
         static void InitConnection()
@@ -45,8 +46,7 @@ namespace FtAiMsDemo
             try
             {
                 TxtLink.Connect(IP);
-                TxtLink.StartOnlineMode();
-                TxtLink.TxtCamera.StartCamera();                
+                TxtLink.StartOnlineMode();                              
             }
             catch(Exception ex)
             {               
@@ -66,10 +66,12 @@ namespace FtAiMsDemo
         {
             if (TxtLink != null)
             {
-                TxtLink.TxtCamera.StopCamera();
+                
                 // Handle when your app sleeps
                 TxtLink.StopOnlineMode();
-                
+
+                TxtLink.TxtCamera.StopCamera();
+
                 //// Disconnect from the interface
                 if (TxtLink.Connection == ConnectionStatus.Connected)
                     TxtLink.Disconnect();

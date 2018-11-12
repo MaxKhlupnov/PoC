@@ -27,21 +27,36 @@ namespace FtAiMsDemo.Helpers
         public class FtImageSource : StreamImageSource
         {
                 private byte[] imageBytes { get; set;}
+                private bool isDirty = false;
 
                 public FtImageSource()
                 {
                     InitFromResource();
                     App.TxtLink.Connected += TxtLink_Connected;
 
-                    Func<Stream> streamFunc = () => { return new MemoryStream(this.imageBytes); };
+                    Func<Stream> streamFunc = () => {
+                        lock (imageBytes)
+                        {
+                            isDirty = false;
+                            return new MemoryStream(this.imageBytes);
+                        }
+                    };
 
                     this.Stream = token => Task.Run(streamFunc, token);
                 }
 
-                private void TxtLink_Connected(object sender, EventArgs e)
-                {
+                private void TxtLink_Connected(object sender, EventArgs e){
+                    App.TxtLink.TxtCamera.StartCamera();
+                    App.TxtLink.TxtCamera.FrameReceived += TxtCamera_FrameReceived;
+                   this.Run();
+                }
 
-            App.TxtLink.TxtCamera.FrameReceived += TxtCamera_FrameReceived;
+                private void Run()
+                {
+                     Device.StartTimer(TimeSpan.FromSeconds(1),() => {
+                         this.OnSourceChanged();
+                         return true;
+                     });
                 }
 
         private void  InitFromResource()
@@ -58,10 +73,11 @@ namespace FtAiMsDemo.Helpers
 
                 //static int FileNum = 0;
                 private void TxtCamera_FrameReceived(object sender, TXTCommunication.Fischertechnik.Txt.Camera.FrameReceivedEventArgs e)
-                {
-                    imageBytes = e.FrameData;
-                    this.OnSourceChanged();
-                    //this.Source = StreamImageSource.FromStream(() => { return new MemoryStream(e.FrameData); });
+                {       lock (imageBytes)
+                        {
+                            isDirty = true;
+                            imageBytes = e.FrameData;
+                        }
                 }
     }
        
