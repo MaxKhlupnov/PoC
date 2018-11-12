@@ -13,8 +13,7 @@ namespace FtAiMsDemo.Views
 	public partial class CameraView : ContentView
 	{
 		public CameraView ()
-		{
-            
+		{           
             InitializeComponent ();
         }
 

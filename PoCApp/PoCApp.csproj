@@ -8,6 +8,7 @@
   <Import Project="..\FtApp\FtApp.projitems" Label="Shared" />
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.CognitiveServices.Vision.CustomVision.Prediction" Version="0.12.0-preview" />
     <PackageReference Include="System.IO.Ports" Version="4.5.0" />
   </ItemGroup>
 

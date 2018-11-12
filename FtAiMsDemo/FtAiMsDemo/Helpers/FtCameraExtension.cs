@@ -26,6 +26,7 @@ namespace FtAiMsDemo.Helpers
     
         public class FtImageSource : StreamImageSource
         {
+                
                 private byte[] imageBytes { get; set;}
                 private bool isDirty = false;
 
@@ -46,6 +47,7 @@ namespace FtAiMsDemo.Helpers
                 }
 
                 private void TxtLink_Connected(object sender, EventArgs e){
+                    App.Log.WriteInfo("Starting Ft camera");
                     App.TxtLink.TxtCamera.StartCamera();
                     App.TxtLink.TxtCamera.FrameReceived += TxtCamera_FrameReceived;
                    this.Run();
@@ -57,6 +59,16 @@ namespace FtAiMsDemo.Helpers
                          this.OnSourceChanged();
                          return true;
                      });
+
+                    Device.StartTimer(TimeSpan.FromSeconds(10), () => {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            string result = CustomVisionWrapper.PredictImage(new MemoryStream(this.imageBytes));                           
+                        });
+                        return true;
+                    });
+
+                    App.Log.WriteInfo("Recognition thread started");
                 }
 
         private void  InitFromResource()
@@ -79,6 +91,8 @@ namespace FtAiMsDemo.Helpers
                             imageBytes = e.FrameData;
                         }
                 }
+
+          //  public delegate void PredictionCompleated(object sender, string predictionResult);
     }
        
 }

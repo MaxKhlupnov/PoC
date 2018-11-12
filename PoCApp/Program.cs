@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Threading;
+using System.IO;
 using TXCommunication;
 using TXTCommunication.Fischertechnik;
 using TXTCommunication.Fischertechnik.Txt;
@@ -10,7 +11,7 @@ namespace PoCApp
 {
     class Program
     {
-        private const string IP = TxtInterface.ControllerBluetoothIp;//ControllerBluetoothIp; //"192.168.8.2"; ControllerUsbIp
+        private const string IP = TxtInterface.ControllerUsbIp;//ControllerBluetoothIp; //"192.168.8.2"; 
         static TxtInterface txtLink = null;
         static int[] I = new int[8];
         static int[] C = new int[4];
@@ -40,11 +41,13 @@ namespace PoCApp
                     default:
                         //Console.WriteLine("Input number from 1 to 3");
 
+                        txtLink.TxtCamera.StopCamera();
                         // Stop the inline mode
                         txtLink.StopOnlineMode();
 
                         // Disconnect from the interface
-                        if (txtLink.Connection == ConnectionStatus.Connected)
+                        if (txtLink.Connection == ConnectionStatus.Connected 
+                            || txtLink.Connection == ConnectionStatus.Online)
                             txtLink.Disconnect();
 
 
@@ -84,8 +87,14 @@ namespace PoCApp
             txtLink.Connect(IP);
             txtLink.StartOnlineMode();
             ConfigureIOPorts();
+            txtLink.TxtCamera.StartCamera();
+            txtLink.TxtCamera.FrameReceived += TxtCamera_FrameReceived;
 
+        }
 
+        private static void TxtCamera_FrameReceived(object sender, TXTCommunication.Fischertechnik.Txt.Camera.FrameReceivedEventArgs e)
+        {
+            CustomVisionWrapper.PredictImage(new MemoryStream(e.FrameData));
         }
 
         private static void ConfigureIOPorts()
@@ -173,7 +182,7 @@ namespace PoCApp
             // 
         }
 
-        private static void MouveToOnePosition()
+        public static void MouveToOnePosition()
         {
             //-- Move motor 2 (Вылет)
             int motor = 2;
@@ -250,7 +259,7 @@ namespace PoCApp
             VacuumCaptureOff();
         }
 
-        private static void MouveToTwoPosition()
+        public static void MouveToTwoPosition()
         {
             //-- Move motor 2 (Вылет)
             int motor = 2;
@@ -344,7 +353,7 @@ namespace PoCApp
             VacuumCaptureOff();
         }
 
-        private static void MouveToThreePosition()
+        public static void MouveToThreePosition()
         {
             //-- Move motor 2 (Вылет)
             int motor = 2;
@@ -439,17 +448,18 @@ namespace PoCApp
 
         private static void SetMotorToNull()
         {
+            Console.WriteLine("Moving to start position");
             int motor = 1;
             int sensor = 1;
 
             while (I[sensor] != 1)
             {
                 Thread.Sleep(200);
-                Console.WriteLine("Start motor");
+               // Console.WriteLine("Start motor");
                 txtLink.SetMotorValue(motor, 512, MotorDirection.Right);
 
             }
-            Console.WriteLine("Stop motor");
+            //Console.WriteLine("Stop motor");
             txtLink.SetMotorValue(motor, 0, MotorDirection.Right);
 
             Thread.Sleep(200);
@@ -459,11 +469,11 @@ namespace PoCApp
             while (I[sensor] != 1)
             {
                 Thread.Sleep(200);
-                Console.WriteLine("Start motor");
+              //  Console.WriteLine("Start motor");
                 txtLink.SetMotorValue(motor, 512, MotorDirection.Right);
 
             }
-            Console.WriteLine("Stop motor");
+           // Console.WriteLine("Stop motor");
             txtLink.SetMotorValue(motor, 0, MotorDirection.Right);
 
             Thread.Sleep(200);
@@ -473,11 +483,11 @@ namespace PoCApp
             while (I[sensor] != 1)
             {
                 Thread.Sleep(200);
-                Console.WriteLine("Start motor");
+               // Console.WriteLine("Start motor");
                 txtLink.SetMotorValue(motor, 512, MotorDirection.Right);
 
             }
-            Console.WriteLine("Stop motor");
+           // Console.WriteLine("Stop motor");
             txtLink.SetMotorValue(motor, 0, MotorDirection.Right);
         }
 
@@ -503,23 +513,23 @@ namespace PoCApp
 
             for (int i = 0; i < e.Counters.Length; i++)
             {
-                Console.Write("C{0} {1}  |", i, e.Counters[i]);
+              //  Console.Write("C{0} {1}  |", i, e.Counters[i]);
                 C[i] = e.Counters[i];
 
             }
-            Console.WriteLine();
+         //   Console.WriteLine();
         }
 
         private static void TxtLink_InputValueChanged(object sender, FtApp.Fischertechnik.Txt.Events.InputValueChangedEventArgs e)
         {
-            Console.SetCursorPosition(0, Console.CursorTop - 1);
+            //Console.SetCursorPosition(0, Console.CursorTop - 1);
 
             for (int i = 0; i < txtLink.GetInputCount(); i++)
             {
-                Console.Write("I{0,1} {1, 5}  |", i + 1, txtLink.GetInputValue(i));
+             //   Console.Write("I{0,1} {1, 5}  |", i + 1, txtLink.GetInputValue(i));
                 I[i] = txtLink.GetInputValue(i);
             }
-            Console.WriteLine();
+         //   Console.WriteLine();
         }
 
         private static void TxtLink_ConnectionLost(object sender, EventArgs e)
@@ -536,5 +546,7 @@ namespace PoCApp
         {
             Console.WriteLine("Connected");
         }
+
+
     }
 }

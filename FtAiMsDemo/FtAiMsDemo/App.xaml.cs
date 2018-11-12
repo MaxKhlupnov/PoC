@@ -55,27 +55,45 @@ namespace FtAiMsDemo
         }
 
         protected override void OnStart()
-        {
-                     
-            InitConnection();
-            //ConfigureIOPorts();                       
+        {       
+               InitConnection();
+               ConfigureIOPorts();
         }
-        
+
+        private static void ConfigureIOPorts()
+        {
+            // Configure the input ports
+            int inputPort = 0;
+            App.TxtLink.ConfigureInputMode(inputPort++, InputMode.ModeR, true);
+            App.TxtLink.ConfigureInputMode(inputPort++, InputMode.ModeR, true);
+            App.TxtLink.ConfigureInputMode(inputPort++, InputMode.ModeR, true);
+            App.TxtLink.ConfigureInputMode(inputPort++, InputMode.ModeR, true);
+            App.TxtLink.ConfigureInputMode(inputPort++, InputMode.ModeR, true);
+            App.TxtLink.ConfigureInputMode(inputPort++, InputMode.ModeR, true);
+            App.TxtLink.ConfigureInputMode(inputPort++, InputMode.ModeR, true);
+            App.TxtLink.ConfigureInputMode(inputPort, InputMode.ModeR, true);
+
+            int outputIndex = 0;
+            App.TxtLink.ConfigureOutputMode(outputIndex++, true);
+            App.TxtLink.ConfigureOutputMode(outputIndex++, true);
+            App.TxtLink.ConfigureOutputMode(outputIndex++, true);
+            App.TxtLink.ConfigureOutputMode(outputIndex++, false);
+        }
 
         protected override void OnSleep()
         {
             if (TxtLink != null)
             {
-                
-                // Handle when your app sleeps
-                TxtLink.StopOnlineMode();
-
                 TxtLink.TxtCamera.StopCamera();
 
                 //// Disconnect from the interface
-                if (TxtLink.Connection == ConnectionStatus.Connected)
+                if (TxtLink.Connection == ConnectionStatus.Connected 
+                                || TxtLink.Connection == ConnectionStatus.Online)
+                {
+                    // Handle when your app sleeps
+                   // TxtLink.StopOnlineMode();
                     TxtLink.Disconnect();
-
+                }
 
                 //// Don't forget to dispose
                 TxtLink.Dispose();
